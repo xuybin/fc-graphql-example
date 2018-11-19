@@ -51,6 +51,18 @@ tasks {
         args = listOf("--spring.profiles.active=dev")
         //jvmArgs = listOf("-Dspring.profiles.active=dev")
     }
+    startScripts{
+        //classpath = files("path/to/some.jar")
+        //outputDir = file("build/sample")
+    }
+    distZip{
+        eachFile{
+            path=path.replace("${project.name}-${project.version}/","")
+        }
+    }
+    distTar{
+        enabled=false
+    }
 
     register("funDeploy", NpmTask::class) {
         group = "Node"
