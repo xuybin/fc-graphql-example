@@ -24,7 +24,6 @@ plugins {
 
 version = "0.1.0"
 group = "com.github.xuybin"
-application.mainClassName = "com.github.xuybin.fc.graphql.MainKt"
 
 repositories {
     mavenCentral()
@@ -46,8 +45,8 @@ node {
 }
 
 tasks {
+    application.mainClassName = "com.github.xuybin.fc.graphql.MainKt"
     named<JavaExec>("run") {
-        main = application.mainClassName
         classpath = sourceSets["main"].runtimeClasspath
         args = listOf("--spring.profiles.active=dev")
         //jvmArgs = listOf("-Dspring.profiles.active=dev")
@@ -95,7 +94,7 @@ tasks {
         manifest {
             attributes(
                 mapOf(
-                    "Main-Class" to project.application.mainClassName
+                    "Main-Class" to application.mainClassName
                     , "Implementation-Title" to project.name
                     , "Implementation-Version" to project.version
                 )
@@ -104,13 +103,18 @@ tasks {
         into("lib") {
             from(configurations.compile.get().resolve().map { if (it.isDirectory) it else it })
         }
+        delete{
+            fileTree("${buildDir}/resources/main") {
+                include("**/*-dev.properties")
+            }
+        }
     }
 
     processResources {
-        filesMatching("**/defaults.properties") {
+        filesMatching("**/*.properties") {
             expand(project.properties)
         }
-        filesMatching("logback.xml") {
+        filesMatching("**/*.xml") {
             expand(project.properties)
         }
         serviceLoaderGen("com.github.xuybin.fc.graphql.GApp")
