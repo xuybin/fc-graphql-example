@@ -1,0 +1,9 @@
+extend type Query {
+  # 不存在userId报异常
+  hello(userId: String!): String!
+}
+
+extend type Mutation {
+  # 后端随机生成一个用户名
+  newUserId: String!
+}

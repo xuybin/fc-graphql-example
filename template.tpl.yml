@@ -1,0 +1,78 @@
+
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  exampleService:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Description: 'example服务'
+      LogConfig:
+        Project: example-log
+        Logstore: example-log-store
+      Policies:
+        - Version: '1'
+          Statement:
+            - Effect: Allow
+              Action:
+                - oss:Get*
+              Resource: 'acs:oss:*:*:pd-auto-builds-apk/*'
+            - Effect: Allow
+              Action:
+                - oss:List*
+              Resource: 'acs:oss:*:*:pd-auto-builds-apk'
+            - Effect: Allow
+              Action:
+                - ots:Create*
+                - ots:Update*
+                - ots:BatchWrite*
+                - ots:Delete*
+                - ots:Put*
+                - ots:Update*
+                - ots:BatchGet*
+                - ots:Describe*
+                - ots:Get*
+                - ots:List*
+              Resource: 'acs:ots:*:*:instance/exampleStore'
+    graphql:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Handler: com.github.xuybin.bgraphql.Function::handleRequest
+        Runtime: java8
+        Description: 'graphql接口'
+        CodeUri: './build/libs/${project.name}-${project.version}.jar'
+        MemorySize: 128
+        Timeout: 60
+        EnvironmentVariables:
+          ALIYUN_OTS_INSTANCE_NAME: exampleTableStore
+          ALIYUN_OTS_TABLE_NAME: exampleTable
+          ALIYUN_OTS_ENDPOINT: https://exampleStore.cn-shenzhen.ots.aliyuncs.com
+      Events:
+        http-test:
+          Type: HTTP
+          Properties:
+            AuthType: ANONYMOUS
+            Methods: ['POST']
+
+  exampleStore:
+    Type: 'Aliyun::Serverless::TableStore'
+    Properties:
+      ClusterType: HYBRID
+      Description: 'example表格存储'
+    exampleTable:
+      Type: 'Aliyun::Serverless::TableStore::Table'
+      Properties:
+        PrimaryKeyList:
+          - Name: uid
+            Type: INTEGER
+          - Name: cid
+            Type: STRING
+
+  example-log:
+    Type: 'Aliyun::Serverless::Log'
+    Properties:
+      Description: 'example日志存储'
+    example-log-store:
+      Type: 'Aliyun::Serverless::Log::Logstore'
+      Properties:
+        TTL: 3650
+        ShardCount: 1
