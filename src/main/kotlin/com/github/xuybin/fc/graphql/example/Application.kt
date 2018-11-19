@@ -10,8 +10,6 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import kotlin.reflect.KClass
 
-//@SpringBootApplication
-//@EnableAutoConfiguration
 @Configuration
 @ComponentScan
 class Application

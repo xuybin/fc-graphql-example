@@ -18,17 +18,13 @@ plugins {
     application
     kotlin("jvm") version "1.3.10"
     kotlin("plugin.spring") version "1.3.10"
-    id("org.springframework.boot") version "2.0.6.RELEASE"
     id("com.moowork.node") version "1.2.0"
 }
 
 
 version = "0.1.0"
 group = "com.github.xuybin"
-
-application {
-    mainClassName = "com.github.xuybin.fc.graphql.MainKt"
-}
+application.mainClassName = "com.github.xuybin.fc.graphql.MainKt"
 
 repositories {
     mavenCentral()
@@ -50,17 +46,20 @@ node {
 }
 
 tasks {
-    bootRun{
-        main=project.application.mainClassName
-        args=listOf("--spring.profiles.active=dev")
+    named<JavaExec>("run") {
+        main = application.mainClassName
+        classpath = sourceSets["main"].runtimeClasspath
+        args = listOf("--spring.profiles.active=dev")
+        //jvmArgs = listOf("-Dspring.profiles.active=dev")
     }
+
     register("funDeploy", NpmTask::class) {
         group = "Node"
         project.copy {
             from("${project.projectDir}")
             include("*.tpl.yml")
-            rename{
-                it.replace(".tpl.yml",".yml")
+            rename {
+                it.replace(".tpl.yml", ".yml")
             }
             expand(project.properties)
             into("${project.projectDir}")
@@ -114,9 +113,7 @@ tasks {
         filesMatching("logback.xml") {
             expand(project.properties)
         }
-        doFirst{
-        	serviceLoaderGen("com.github.xuybin.fc.graphql.GApp")
-        }
+        serviceLoaderGen("com.github.xuybin.fc.graphql.GApp")
     }
 
     compileKotlin {
@@ -156,7 +153,6 @@ fun serviceLoaderGen(serviceName: String) {
     if (serviceImpls.size > 0) {
         File(servicePath).also {
             it.parentFile.mkdirs()
-            //println("由${serviceName}的实现类生成${it}")
             it.writeText(serviceImpls.joinToString("\n"))
         }
     }
