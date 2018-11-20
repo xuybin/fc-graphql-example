@@ -22,7 +22,7 @@ plugins {
 }
 
 
-version = "0.1.0"
+version = "0.1.2"
 group = "com.github.xuybin"
 
 repositories {
@@ -46,22 +46,11 @@ node {
 
 tasks {
     application.mainClassName = "com.github.xuybin.fc.graphql.MainKt"
+
     named<JavaExec>("run") {
         classpath = sourceSets["main"].runtimeClasspath
         args = listOf("--spring.profiles.active=dev")
         //jvmArgs = listOf("-Dspring.profiles.active=dev")
-    }
-    startScripts{
-        //classpath = files("path/to/some.jar")
-        //outputDir = file("build/sample")
-    }
-    distZip{
-        eachFile{
-            path=path.replace("${project.name}-${project.version}/","")
-        }
-    }
-    distTar{
-        enabled=false
     }
 
     register("funDeploy", NpmTask::class) {
@@ -115,12 +104,24 @@ tasks {
         into("lib") {
             from(configurations.compile.get().resolve().map { if (it.isDirectory) it else it })
         }
+        mustRunAfter("startScripts")
+        into("bin") {
+            from("${buildDir}/scripts"){
+                eachFile{
+                    val scriptText=file.readText().replace("/lib/${project.name}-${project.version}.jar","").replace("\\lib\\${project.name}-${project.version}.jar","")
+                    file.writeText(scriptText)
+                }
+            }
+        }
         delete{
             fileTree("${buildDir}/resources/main") {
                 include("**/*-dev.properties")
             }
         }
     }
+
+    distTar { enabled=false }
+    distZip{enabled=false }
 
     processResources {
         filesMatching("**/*.properties") {
