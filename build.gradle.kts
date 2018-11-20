@@ -119,7 +119,9 @@ tasks {
             }
         }
     }
-
+    startScripts{
+        applicationName="run"
+    }
     distTar { enabled=false }
     distZip{enabled=false }
 
