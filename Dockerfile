@@ -8,7 +8,7 @@ RUN apk add --update unzip && \
     rm -rf /tmp/*  /var/cache/apk/* && \
     find ~/.gradle  /application -delete
 
-CMD [ "/deployments/run-in-docker" ]
+CMD [ "/deployments/bin/run-in-docker" ]
 EXPOSE 8080
 
 

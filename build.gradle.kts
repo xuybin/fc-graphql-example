@@ -149,6 +149,9 @@ tasks {
         filesMatching("**/*.xml") {
             expand(project.properties)
         }
+        doFirst{
+            serviceLoaderGen("com.github.xuybin.fc.graphql.GApp")
+        }
         serviceLoaderGen("com.github.xuybin.fc.graphql.GApp")
     }
 
