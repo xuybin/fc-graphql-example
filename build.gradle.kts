@@ -9,6 +9,7 @@ buildscript {
         , "springBoot" to "org.springframework.boot:spring-boot:2.0.6.RELEASE"
         , "gson" to "com.google.code.gson:gson:2.8.5"
         , "logback" to "ch.qos.logback:logback-classic:1.2.3"
+        , "runJavaSh" to "io.fabric8:run-java-sh:1.2.2"
     ).entries.forEach {
         extra.set(it.key, parent?.extra?.run { if (has(it.key)) get(it.key) else null } ?: it.value)
     }
@@ -22,13 +23,12 @@ plugins {
 }
 
 
-version = "0.1.2"
+version = "0.1.4"
 group = "com.github.xuybin"
 
 repositories {
     mavenCentral()
     jcenter()
-    maven("https://dl.bintray.com/xuybin/maven")
 }
 
 dependencies {
@@ -36,6 +36,7 @@ dependencies {
     compile(extra["springBoot"].toString())
     compile(extra["gson"].toString())
     compile(extra["logback"].toString())
+    compileOnly(extra["runJavaSh"].toString())
 }
 
 node {
@@ -105,25 +106,41 @@ tasks {
             from(configurations.compile.get().resolve().map { if (it.isDirectory) it else it })
         }
         mustRunAfter("startScripts")
+
+
         into("bin") {
-            from("${buildDir}/scripts"){
-                eachFile{
-                    val scriptText=file.readText().replace("/lib/${project.name}-${project.version}.jar","").replace("\\lib\\${project.name}-${project.version}.jar","")
-                    file.writeText(scriptText)
-                }
+            val dockerRunSh: String =
+                configurations.compileOnly.get().resolve().first { it.name.startsWith("run-java-sh") }
+                    .let { zipTree(it) }.first { it.name.startsWith("run-java.sh") }.absolutePath
+            from("${buildDir}/scripts", dockerRunSh)
+            rename {
+                it.replace("run-java.sh", "run-in-docker")
+            }
+            eachFile {
+                var scriptText = file.readText()
+                    .replace("/lib/${project.name}-${project.version}.jar", "")
+                    .replace("\\lib\\${project.name}-${project.version}.jar", "")
+                    .replace("local cp_path=\".\"", "local cp_path=\"\${JAVA_APP_DIR}/../:\${JAVA_APP_DIR}/../lib/*\"")
+                    .replace("JAVA_APP_JAR=\"\$(auto_detect_jar_file \${JAVA_APP_DIR})\"", "")
+                    .replace("check_error \"\${JAVA_APP_JAR}\"", "echo \"\" >/dev/null")
+                    .replace("args=\"-jar \${JAVA_APP_JAR}\"", "args=\"${application.mainClassName}\"")
+                file.writeText(
+                    scriptText
+                )
             }
         }
-        delete{
+
+        delete {
             fileTree("${buildDir}/resources/main") {
                 include("**/*-dev.properties")
             }
         }
     }
-    startScripts{
-        applicationName="run"
+    startScripts {
+        applicationName = "run"
     }
-    distTar { enabled=false }
-    distZip{enabled=false }
+    distTar { enabled = false }
+    distZip { enabled = false }
 
     processResources {
         filesMatching("**/*.properties") {
