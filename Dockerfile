@@ -1,4 +1,4 @@
-FROM 8-jdk-alpine
+FROM java:8-jdk-alpine
 
 COPY .  /application
 RUN apk add --update unzip && \
