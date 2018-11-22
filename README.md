@@ -18,5 +18,5 @@ export ACCESS_KEY_SECRET=xxxxxxxxxx
 ### Microservice Deploy
 ``` bash
 ./gradlew assemble
-
+docker-compose up
 ```

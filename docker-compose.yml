@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   fc-graphql-example:
-    image: registry.cn-shenzhen.aliyuncs.com/xuybin/fc-graphql-example
+    build: .
     volumes:
       - /root/log:/root/log
       - /tmp:/tmp
