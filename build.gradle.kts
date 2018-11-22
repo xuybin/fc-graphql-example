@@ -149,10 +149,6 @@ tasks {
         filesMatching("**/*.xml") {
             expand(project.properties)
         }
-        doFirst{
-            serviceLoaderGen("com.github.xuybin.fc.graphql.GApp")
-        }
-        serviceLoaderGen("com.github.xuybin.fc.graphql.GApp")
     }
 
     compileKotlin {
@@ -160,6 +156,7 @@ tasks {
             freeCompilerArgs = listOf("-Xjsr305=strict")
             jvmTarget = "1.8"
         }
+        serviceLoaderGen("com.github.xuybin.fc.graphql.GApp")
     }
 
     compileTestKotlin {
@@ -172,7 +169,8 @@ tasks {
 
 fun serviceLoaderGen(serviceName: String) {
     val servicePath =
-        "${project.buildDir}${File.separator}resources${File.separator}main${File.separator}META-INF${File.separator}services${File.separator}$serviceName"
+        "${project.projectDir}${File.separator}src${File.separator}main${File.separator}resources${File.separator}META-INF${File.separator}services${File.separator}$serviceName"
+   println("servicePath-$servicePath")
     var serviceImpls = mutableSetOf<String>()
     project.sourceSets["main"].allSource.forEach {
         if (it.name.endsWith(".kt")) {
