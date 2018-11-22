@@ -168,8 +168,7 @@ tasks {
 }
 
 fun serviceLoaderGen(serviceName: String) {
-    val servicePath =
-        "${project.projectDir}${File.separator}src${File.separator}main${File.separator}resources${File.separator}META-INF${File.separator}services${File.separator}$serviceName"
+    val servicePath = "${project.projectDir}${File.separator}src${File.separator}main${File.separator}resources${File.separator}META-INF${File.separator}services${File.separator}$serviceName"
    println("servicePath-$servicePath")
     var serviceImpls = mutableSetOf<String>()
     project.sourceSets["main"].allSource.forEach {
