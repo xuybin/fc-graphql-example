@@ -21,3 +21,7 @@ git clone https://github.com/xuybin/fc-graphql-example.git
 cd fc-graphql-example
 docker-compose up
 ```
+### Visit
+``` bash
+curl -H "Content-Type: application/json" -d '{"query":"{\n  version\n}\n","variables":null}' http://fc.gshbzw.com/example-service
+```
