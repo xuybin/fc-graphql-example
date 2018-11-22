@@ -36,12 +36,14 @@ Resources:
     graphql:
       Type: 'Aliyun::Serverless::Function'
       Properties:
-        Handler: com.github.xuybin.bgraphql.Function::handleRequest
+        Handler: com.github.xuybin.fc.graphql.Function::handleRequest
+        Initializer: com.github.xuybin.fc.graphql.Function::initialize
         Runtime: java8
         Description: 'graphql接口'
         CodeUri: './build/libs/${project.name}-${project.version}.jar'
-        MemorySize: 128
+        MemorySize: 448
         Timeout: 60
+        InitializationTimeout: 300
         EnvironmentVariables:
           ALIYUN_OTS_INSTANCE_NAME: exampleTableStore
           ALIYUN_OTS_TABLE_NAME: exampleTable
@@ -52,6 +54,16 @@ Resources:
           Properties:
             AuthType: ANONYMOUS
             Methods: ['POST']
+
+  fc.gshbzw.com:
+    Type: 'Aliyun::Serverless::CustomDomain'
+    Properties:
+      Protocol: HTTP
+      RouteConfig:
+        routes:
+          '/example-service':
+            serviceName: exampleService
+            functionName: graphql
 
   exampleStore:
     Type: 'Aliyun::Serverless::TableStore'
