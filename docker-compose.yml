@@ -4,15 +4,11 @@ services:
   fc-graphql-example:
     image: registry.cn-shenzhen.aliyuncs.com/xuybin/fc-graphql-example
     volumes:
-      - log-dir:/root/log
+      - /root/log:/root/log
       - /tmp:/tmp
+    environment:
+      - SPRING.PROFILES.ACTIVE=dev
     networks:
       - pdnet
     ports:
       - 8080:8080
-
-networks:
-  pdnet:
-
-volumes:
-  log-dir:
