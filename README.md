@@ -17,6 +17,7 @@ export ACCESS_KEY_SECRET=xxxxxxxxxx
 
 ### Microservice Deploy
 ``` bash
-./gradlew assemble
+git clone https://github.com/xuybin/fc-graphql-example.git
+cd fc-graphql-example
 docker-compose up
 ```
