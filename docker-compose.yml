@@ -1,0 +1,18 @@
+version: '3.6'
+
+services:
+  fc-graphql-example:
+    image: registry.cn-shenzhen.aliyuncs.com/xuybin/fc-graphql-example
+    volumes:
+      - log-dir:/root/log
+      - /tmp:/tmp
+    networks:
+      - pdnet
+    ports:
+      - 8080:8080
+
+networks:
+  pdnet:
+
+volumes:
+  log-dir:
