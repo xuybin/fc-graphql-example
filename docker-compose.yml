@@ -8,7 +8,5 @@ services:
       - /tmp:/tmp
     environment:
       - SPRING.PROFILES.ACTIVE=dev
-    networks:
-      - pdnet
     ports:
       - 8080:8080
