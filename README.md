@@ -1,5 +1,5 @@
 # example
-[![Build Status](https://travis-ci.org/xuybin/fc-graphql-spring-example.svg?branch=master)](https://travis-ci.org/xuybin/fc-graphql-spring-example)
+[![Build Status](https://travis-ci.org/xuybin/fc-graphql-example.svg?branch=master)](https://travis-ci.org/xuybin/fc-graphql-example)
 
 ### debug
 ``` bash
