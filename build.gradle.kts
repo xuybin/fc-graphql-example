@@ -129,11 +129,8 @@ tasks {
                 )
             }
         }
-
-        delete {
-            fileTree("${buildDir}/resources/main") {
-                include("**/*-dev.properties")
-            }
+        doFirst{
+            delete(fileTree("${buildDir}/resources/main").filter { it.name.endsWith("-dev.properties")}.first())
         }
     }
     startScripts {
